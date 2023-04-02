@@ -3,20 +3,17 @@ const config = require('../config')
 const bcrypt = require('bcrypt')
 const jwt = require('../token')
 
-
-class Seller{
+class Customer{
     constructor() {
       this.db = null
-      console.log("ulazak u konstruktor")
       }
     async initializeDB(){
-      console.log("ulazak u inicijal")
       this.db = await new Cosmos(config.conString).getDatabase("Shopsy");
     }
 
-    async RegisterSeller(user){
+    async RegisterCustomer(user){
       try{
-        const u = await this.db.find("Seller", {
+        const u = await this.db.find("Customer", {
           filter:{
             id : user.id
           }
@@ -24,13 +21,13 @@ class Seller{
         let sendInfo = {}
         console.log(u)
         if(Object.keys(u).length == 0){
-          await this.db.upsert("Seller", user)
+          await this.db.upsert("Customer", user)
           let token = jwt.createToken(user.id)
           sendInfo = {
             status:200,
             token: token,
             id: user.id,
-            tip:"Seller"
+            tip:"Customer"
         }
       }
       else{
@@ -45,8 +42,8 @@ class Seller{
       }
     }
 
-    async LoginSeller(id, password){
-      const users = await this.db.find("Seller", {
+    async LoginCustomer(id, password){
+      const users = await this.db.find("Customer", {
         filter:{
           id: id
         }
@@ -62,7 +59,7 @@ class Seller{
             result.sendInfo = {
                 id: u.id,
                 token:token,
-                tip:"Seller"
+                tip:"Customer"
             }
             result.status = 200
         }
@@ -76,8 +73,8 @@ class Seller{
       return result
     }
 
-    async GetSellerById(id){
-      const users = await this.db.find("Seller", {
+    async GetCustomerById(id){
+      const users = await this.db.find("Customer", {
         filter:{
           id: id
         }
@@ -85,46 +82,23 @@ class Seller{
       return users[0]
     }
 
-    async GetAllSellers(){
-      const users = await this.db.findBySQL("Seller", "SELECT * from c");
-      return users
-    }
-
-    async UpdateSeller(id, info){
-      const users = await this.db.find("Seller", {
+    async UpdateCustomer(id, info){
+      const users = await this.db.find("Customer", {
         filter:{
           id: id
         }
       })
       let user = users[0]
-      user.owner = info.owner;
-      user.store = info.store;
       user.email = info.email;
       console.log(user)
-      await this.db.upsert("Seller", user)
-      console.log(user)
-      return user
-    }
-
-    async RateSeller(id, info){
-      const users = await this.db.find("Seller", {
-        filter:{
-          id: id
-        }
-      })
-      let user = users[0]
-      let noviRating = user.NoR != 0 ? (user.rating*user.NoR)+info.rating : info.rating;
-      user.NoR +=1;
-      user.rating = noviRating / user.NoR;
-      console.log(user)
-      await this.db.upsert("Seller", user)
+      await this.db.upsert("Customer", user)
       console.log(user)
       return user
     }
 
 }
 
-const seller = new Seller()
-seller.initializeDB()
+const customer = new Customer()
+customer.initializeDB()
 
-module.exports = seller
+module.exports = customer

@@ -1,59 +1,30 @@
-// Define "require"
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-
-const __dirname = path.dirname(__filename);
-
 require('dotenv').config({path: __dirname + '/.env'})
 
-
+//osnovni deo
 const express = require('express');
 const cors = require('cors')
 
-
-
-const SellerController = require('./controllers/sellerController')
-const Seller = require('./models/sellerModel')
-
-
-
- const CosmosClient = require('@azure/cosmos').CosmosClient
- const config = require('./config')
+//rute
+const sellerRoute = require('./routes/sellerRoutes')
+const customerRoute = require('./routes/customerRoutes')
+const orderRoute = require('./routes/orderRoutes')
+const productRoute = require('./routes/productRoutes')
 
 
 
+//osnovni deo
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended:false}));
 app.use(cors())
 
 
+//namestanje ruta
+app.use('/api/seller', sellerRoute)
+app.use('/api/customer', customerRoute)
+app.use('/api/order', orderRoute)
+app.use('/api/product', productRoute)
 
-const cosmosClient = new CosmosClient({
-    endpoint: config.endpoint,
-    key: config.primaryKey
-  })
-  const seller = new Seller(cosmosClient, "Shopsy", "Seller")
-  const sellerContr = new SellerController(seller)
-
-
-  seller
-    .init(err => {
-      console.error(err)
-    })
-    .catch(err => {
-      console.error(err)
-      console.error(
-        'Shutting down because there was an error settinig up the database.'
-      )
-      process.exit(1)
-    })
-
-sellerContr.getItem("1")
 
 
 app.listen(3000, ()=>{
