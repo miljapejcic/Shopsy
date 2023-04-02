@@ -1,18 +1,19 @@
 <template lang="">
-    <div>
     <HeaderHomepage/>
-        <h1>Homepage</h1>
-    <p>Welcome to my Vue 3 app!</p>
-    </div>
+    <h1>Ovde ide lista generalno preporucenih proizvoda</h1>
+    <h1>Ispod ide lista generalno preporucenih prodavaca</h1>
+    <Footer/>
 </template>
 
 
 <script>
 import HeaderHomepage from '@/components/HeaderHomepage.vue';
+import Footer from '@/components/Footer.vue'
 
 export default {
     components:{
-    HeaderHomepage
+    HeaderHomepage,
+    Footer
     }
     
 }

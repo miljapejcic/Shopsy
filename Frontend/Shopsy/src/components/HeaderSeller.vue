@@ -1,0 +1,26 @@
+<template>
+    <header class="bg-light">
+      <nav class="container d-flex justify-content-between align-items-center py-3">
+        <router-link :to="{ name: 'SellerHomepage' }" class="navbar-brand" >Welcome to Shopsy, happy selling!</router-link>
+        <div>
+          <router-link class="btn btn-primary me-2" to="/SellerProfile">Profile</router-link>
+          <a class="btn btn-secondary" @click="logout">Logout</a>
+        </div>
+      </nav>
+    </header>
+  </template>
+  
+  <script>
+  export default {
+    name: 'HeaderSeller',
+    methods:{
+        logout(){
+            this.$store.dispatch('Logout')
+        }
+    }
+  }
+  </script>
+  
+  <style scoped>
+  /* You can add custom styles here */
+  </style>

@@ -15,7 +15,7 @@ class Customer{
       try{
         const u = await this.db.find("Customer", {
           filter:{
-            id : user.id
+            username : user.username
           }
         })
         let sendInfo = {}
@@ -27,7 +27,7 @@ class Customer{
             status:200,
             token: token,
             id: user.id,
-            tip:"Customer"
+            tip:"Buyer"
         }
       }
       else{
@@ -42,10 +42,10 @@ class Customer{
       }
     }
 
-    async LoginCustomer(id, password){
+    async LoginCustomer(username, password){
       const users = await this.db.find("Customer", {
         filter:{
-          id: id
+          username: username
         }
       })
       let result = {}
@@ -59,7 +59,7 @@ class Customer{
             result.sendInfo = {
                 id: u.id,
                 token:token,
-                tip:"Customer"
+                tip:"Buyer"
             }
             result.status = 200
         }
@@ -89,7 +89,7 @@ class Customer{
         }
       })
       let user = users[0]
-      user.email = info.email;
+      user.name = info.name;
       console.log(user)
       await this.db.upsert("Customer", user)
       console.log(user)

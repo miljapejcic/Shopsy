@@ -7,10 +7,8 @@ const jwt = require('../token')
 class Seller{
     constructor() {
       this.db = null
-      console.log("ulazak u konstruktor")
       }
     async initializeDB(){
-      console.log("ulazak u inicijal")
       this.db = await new Cosmos(config.conString).getDatabase("Shopsy");
     }
 
@@ -18,7 +16,7 @@ class Seller{
       try{
         const u = await this.db.find("Seller", {
           filter:{
-            id : user.id
+            username : user.username
           }
         })
         let sendInfo = {}
@@ -45,10 +43,10 @@ class Seller{
       }
     }
 
-    async LoginSeller(id, password){
+    async LoginSeller(username, password){
       const users = await this.db.find("Seller", {
         filter:{
-          id: id
+          username: username
         }
       })
       let result = {}
@@ -99,7 +97,6 @@ class Seller{
       let user = users[0]
       user.owner = info.owner;
       user.store = info.store;
-      user.email = info.email;
       console.log(user)
       await this.db.upsert("Seller", user)
       console.log(user)

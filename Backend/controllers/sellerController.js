@@ -1,16 +1,18 @@
 const seller = require('../models/sellerModel')
 const bcrypt = require('bcrypt')
+const { v4: uuidv4 } = require('uuid')
 
 
 const RegisterSeller = async (req, res) =>{
   try{
     bcrypt.hash(req.body.password, 10, async function(err, hashpass) {
+        const idv4 = uuidv4().replace(/-/g, '');
         const user = {
-          id: req.body.id,
+          id: idv4,
+          username: req.body.username,
           password: hashpass,
           store: req.body.store,
           owner: req.body.owner,
-          email:req.body.email,
           rating:0,
           NoR:0
         }
@@ -32,8 +34,8 @@ const RegisterSeller = async (req, res) =>{
 
 const LoginSeller = async (req, res) =>{
   try{
-    const {id, password} = req.body
-    await seller.LoginSeller(id, password).then( result =>{
+    const {username, password} = req.body
+    await seller.LoginSeller(username, password).then( result =>{
       if(result.status==200){
         res.status(200).send(result.sendInfo)
       }
