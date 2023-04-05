@@ -2,24 +2,26 @@ const express = require('express');
 const router = express.Router();
 
 
-// const { CreateProduct,
-//         UpdateProduct,
-//         GetProductById,
+const { CreateProduct,
+        UpdateProduct,
+        GetProductById,
+        RateProduct,
 //         DeleteProduct,
-//         ListAllProductsBcSeller,
+        GetAllProducts,
 //         ListAllProductsBcRating,
-//         ListAllProductsBcCategory,
-//         ListAllProductsForSeller
-//  } = require('../controllers/productController');
+        ListAllProductsFromCategory,
+        ListAllProductsForSeller
+ } = require('../controllers/productController');
 
 
-// router.post('/CreateProduct', CreateProduct )
-// router.put('/UpdateProduct/:id', UpdateProduct )
-// router.get('/GetProductById/:id', GetProductById )
+router.post('/CreateProduct', CreateProduct )
+router.put('/UpdateProduct/:id', UpdateProduct )
+router.get('/GetProductById/:id', GetProductById )
 // router.delete('/DeleteProduct/:id', DeleteProduct )
-// router.get('/ListAllProductsBcSeller/:sellerId', ListAllProductsBcSeller )
+router.put('/RateProduct/:id', RateProduct)
+router.get('/GetAllProducts', GetAllProducts )
 // router.get('/ListAllProductBcRating', ListAllProductsBcRating )
-// router.get('/ListAllProductsBcCategory', ListAllProductsBcCategory )
-// router.get('/ListAllProductsForSeller/:sellerId', ListAllProductsForSeller )
+router.get('/ListAllProductsFromCategory', ListAllProductsFromCategory )
+router.get('/ListAllProductsForSeller/:sellerId', ListAllProductsForSeller )
 
 module.exports = router

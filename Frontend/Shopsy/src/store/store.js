@@ -9,11 +9,12 @@ const store = createStore({
       currentUserType:null,
       currentToken:null,
       currentUserID:null,
+      allProducts:[]
 
     },
     actions: {
       async RegisterSeller({commit}, regInfo) { 
-        try { 
+        try {
             let res = await Api().post('/api/seller/RegisterSeller', regInfo)
             let data = res.data
             commit('setUserID', data.id)
@@ -113,6 +114,11 @@ const store = createStore({
         $cookies.remove("userType")
         window.location.reload()
       },
+      async GetAllProducts({commit}){
+        let res = await Api().get('/api/product/GetAllProducts')
+        commit('setAllProducts',res.data)
+
+      }
     },
     mutations: {
       setUserID(state, id){
@@ -123,6 +129,9 @@ const store = createStore({
       },
       setUserType(state, type){
         state.currentUserType = type
+      },
+      setAllProducts(state, products){
+        state.allProducts = products
       }
     },
     getters: {
