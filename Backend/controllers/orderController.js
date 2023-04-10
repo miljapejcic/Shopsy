@@ -10,8 +10,9 @@ const CreateOrder = async (req, res) =>{
             buyerId: req.body.buyerId,
             sellerId: req.body.sellerId,
             productId: req.body.productId,
+            productName:"",
+            productCategory:"",
             quantity: req.body.quantity,
-            price: req.body.price,
             status: "pending"
           }
 

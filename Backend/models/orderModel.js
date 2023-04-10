@@ -10,12 +10,15 @@ class Order{
     }
     async CreateOrder(order){
       try{
-          let r = await this.db.upsert("Order", order)
           const products = await this.db.find("Product", {
             filter:{
               id: order.productId
             }
           })
+          order.productName = products[0].name
+          order.productCategory = products[0].category
+          order.price = products[0].price*order.quantity
+          let r = await this.db.upsert("Order", order)
           let p = products[0]
           p.quantity -= order.quantity
           await this.db.upsert("Product", p)

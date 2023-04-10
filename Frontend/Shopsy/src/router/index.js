@@ -3,7 +3,7 @@ import Homepage from '../views/Homepage.vue'
 import BuyerLogin from '@/views/BuyerLogin.vue'
 import SellerLogin from '@/views/SellerLogin.vue'
 import SellerHomepage from '@/views/SellerHomepage.vue'
-import SellerProfile from '@/views/SellerProfile.vue'
+import SellerOrders from '@/views/SellerOrders.vue'
 import BuyerProfile from '@/views/BuyerProfile.vue'
 import BuyerHomepage from '@/views/BuyerHomepage.vue'
 
@@ -80,9 +80,9 @@ const router = createRouter({
       }
     },
     {
-      path: '/SellerProfile',
-      name: 'SellerProfile',
-      component: SellerProfile,
+      path: '/SellerOrders',
+      name: 'SellerOrders',
+      component: SellerOrders,
       beforeEnter(to,from,next) { 
         if (checkType()=="Seller") { 
             next()

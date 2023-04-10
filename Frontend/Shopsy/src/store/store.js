@@ -1,6 +1,7 @@
 import { createStore } from 'vuex'
 import Api from './apiconfig.js'
 import router from '../router/index.js'
+import { isProxy, toRaw } from 'vue';
 
 const cookieTime = "1h"
 
@@ -9,7 +10,10 @@ const store = createStore({
       currentUserType:null,
       currentToken:null,
       currentUserID:null,
-      allProducts:[]
+      allProducts:[],
+      allSellers:[],
+      allProductsForSeller:[],
+      allOrdersForSeller:[]
 
     },
     actions: {
@@ -115,10 +119,108 @@ const store = createStore({
         window.location.reload()
       },
       async GetAllProducts({commit}){
-        let res = await Api().get('/api/product/GetAllProducts')
-        commit('setAllProducts',res.data)
-
-      }
+        try{
+          let res = await Api().get('/api/product/GetAllProducts')
+          commit('setAllProducts',res.data)
+        }
+        catch(err){ 
+          console.log(err)
+        }
+      },
+      async GetAllSellers({commit}){
+        try{
+          let res = await Api().get('/api/seller/GetAllSellers')
+          commit('setAllSellers',res.data)
+        }
+        catch(err) { 
+          console.log(err)
+        }
+      },
+      async UpdateSeller({commit},seller) { 
+        try {
+            let res = await Api().put(`api/seller/UpdateSeller/${seller.id}`,seller)
+            if (res.status == 200) { 
+                alert("Update successful!")
+            }
+            // commit('setNista')
+        } catch (error) {
+            console.log(error)
+        }
+      },
+      async UpdateBuyer({commit},buyer) { 
+        try {
+            let res = await Api().put(`api/customer/UpdateCustomer/${buyer.id}`,buyer)
+            if (res.status == 200) { 
+                alert("Update successful!")
+            }
+            // commit('setNista')
+        } catch (error) {
+            console.log(error)
+        }
+      },
+      async CreateProduct({commit}, product){
+        try{
+          let res = await Api().post('/api/product/CreateProduct', product)
+          if (res.status == 200) { 
+            alert("Product created successfully!")
+          }
+        }
+        catch(err){ 
+          console.log(err)
+        }
+      },
+      async UpdateProduct({commit},product) { 
+        try {
+          console.log(product)
+            let res = await Api().put(`api/product/UpdateProduct/${product.productId}`,product)
+            if (res.status == 200) { 
+                alert("Update successful!")
+            }
+            // commit('setNista')
+        } catch (error) {
+            console.log(error)
+        }
+      },
+      async GetAllProductsForSeller({commit}, sellerId){
+        try{
+          let res = await Api().get(`/api/product/ListAllProductsForSeller/${sellerId}`)
+          commit('setAllProductsForSeller',res.data)
+        }
+        catch(err){ 
+          console.log(err)
+        }
+      },
+      async CreateOrder({commit}, order){
+        try{
+          let res = await Api().post(`/api/order/CreateOrder`, order)
+          if (res.status == 200) { 
+            alert("Order successful!")
+          }
+        }
+        catch(err){ 
+          console.log(err)
+        }
+      },
+      async UpdateOrder({commit}, orderId){
+        try{
+          let res = await Api().put(`/api/order/UpdateOrder/${orderId}`)
+          if (res.status == 200) { 
+            window.location.reload()
+          }
+        }
+        catch(err){ 
+          console.log(err)
+        }
+      },
+      async GetAllOrdersForSeller({commit}, sellerId){
+        try{
+          let res = await Api().get(`/api/order/GetAllOrdersForSeller/${sellerId}`)
+          commit('setAllOrdersForSeller',res.data)
+        }
+        catch(err){ 
+          console.log(err)
+        }
+      },
     },
     mutations: {
       setUserID(state, id){
@@ -132,10 +234,37 @@ const store = createStore({
       },
       setAllProducts(state, products){
         state.allProducts = products
+      },
+      setAllSellers(state, sellers){
+        state.allSellers = sellers
+      },
+      setAllProductsForSeller(state, products){
+        state.allProductsForSeller = products
+      },
+      setAllOrdersForSeller(state, orders){
+        state.allOrdersForSeller = orders
       }
     },
     getters: {
-      // Define your getters here
+      // getAllProducts(state){
+      //   return state.allProducts
+      // },
+      // getAllSellers(state){
+      //   return state.allSellers
+      // },
+      AllProductsForSeller: state => { 
+        return toRaw(state.allProductsForSeller)
+      },
+      AllPendingOrdersForSeller: state => { 
+        return toRaw(state.allOrdersForSeller.filter(o => o.status == "pending"))
+      },
+      AllSentOrdersForSeller: state => { 
+        return toRaw(state.allOrdersForSeller.filter(o => o.status == "sent"))
+      },
+
+      // getAllOrdersForSeller(state){
+      //   return state.allOrdersForSeller
+      // }
     }
   })
 
