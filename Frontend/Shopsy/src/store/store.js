@@ -13,7 +13,10 @@ const store = createStore({
       allProducts:[],
       allSellers:[],
       allProductsForSeller:[],
-      allOrdersForSeller:[]
+      allOrdersForSeller:[],
+      productById:null,
+      sellerById:null,
+      allOrdersForBuyer:[]
 
     },
     actions: {
@@ -195,6 +198,7 @@ const store = createStore({
           let res = await Api().post(`/api/order/CreateOrder`, order)
           if (res.status == 200) { 
             alert("Order successful!")
+            window.location.reload()
           }
         }
         catch(err){ 
@@ -216,6 +220,51 @@ const store = createStore({
         try{
           let res = await Api().get(`/api/order/GetAllOrdersForSeller/${sellerId}`)
           commit('setAllOrdersForSeller',res.data)
+        }
+        catch(err){ 
+          console.log(err)
+        }
+      },
+      async GetAllProductsFromCategory({commit}, sendInfo){
+        try{
+          let res = await Api().post(`/api/product/ListAllProductsFromCategory`, sendInfo)
+          commit('setAllProducts',res.data)
+        }
+        catch(err){ 
+          console.log(err)
+        }
+      },
+      async GetAllSellersFromCategory({commit}, sendInfo){
+        try{
+          let res = await Api().post(`/api/seller/ListAllSellersFromCategory`, sendInfo)
+          commit('setAllSellers',res.data)
+        }
+        catch(err){ 
+          console.log(err)
+        }
+      },
+      async GetProductById({commit}, productId){
+        try{
+          let res = await Api().get(`/api/product/GetProductById/${productId}`)
+          commit('setProductById',res.data)
+        }
+        catch(err){ 
+          console.log(err)
+        }
+      },
+      async GetSellerById({commit}, sellerId){
+        try{
+          let res = await Api().get(`/api/seller/GetSellerById/${sellerId}`)
+          commit('setSellerById',res.data)
+        }
+        catch(err){ 
+          console.log(err)
+        }
+      },
+      async GetOrdersForBuyer({commit}, buyerId){
+        try{
+          let res = await Api().get(`/api/order/GetAllOrdersForCustomer/${buyerId}`)
+          commit('setAllOrdersForBuyer',res.data)
         }
         catch(err){ 
           console.log(err)
@@ -243,15 +292,25 @@ const store = createStore({
       },
       setAllOrdersForSeller(state, orders){
         state.allOrdersForSeller = orders
+      },
+      setProductById(state, product){
+        state.productById = product
+      },
+      setSellerById(state, seller){
+        state.sellerById = seller
+      },
+      setAllOrdersForBuyer(state, orders){
+        state.allOrdersForBuyer = orders
       }
+      
     },
     getters: {
-      // getAllProducts(state){
-      //   return state.allProducts
-      // },
-      // getAllSellers(state){
-      //   return state.allSellers
-      // },
+      AllProducts: state =>{
+        return toRaw(state.allProducts)
+      },
+      AllSellers: state =>{
+        return toRaw(state.allSellers)
+      },
       AllProductsForSeller: state => { 
         return toRaw(state.allProductsForSeller)
       },
@@ -261,10 +320,18 @@ const store = createStore({
       AllSentOrdersForSeller: state => { 
         return toRaw(state.allOrdersForSeller.filter(o => o.status == "sent"))
       },
-
-      // getAllOrdersForSeller(state){
-      //   return state.allOrdersForSeller
-      // }
+      ProductById: state =>{
+        return toRaw(state.productById)
+      },
+      SellerById: state =>{
+        return toRaw(state.sellerById)
+      },
+      AllPendingOrdersForBuyer: state => { 
+        return toRaw(state.allOrdersForBuyer.filter(o => o.status == "pending"))
+      },
+      AllSentOrdersForBuyer: state => { 
+        return toRaw(state.allOrdersForBuyer.filter(o => o.status == "sent"))
+      },
     }
   })
 

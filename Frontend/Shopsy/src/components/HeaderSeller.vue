@@ -1,7 +1,7 @@
 <template>
     <header class="bg-light mb-2">
       <nav class="container d-flex justify-content-between align-items-center py-3">
-        <router-link :to="{ name: 'SellerHomepage' }" class="navbar-brand" >Welcome to Shopsy, happy selling!</router-link>
+        <router-link :to="{ name: 'SellerHomepage' }" class="navbar-brand" ><h3>Welcome to Shopsy, happy selling!</h3></router-link>
         <div>
           <router-link class="btn btn-primary me-2" to="/SellerOrders">Orders</router-link>
           <a class="btn btn-secondary" @click="logout">Logout</a>

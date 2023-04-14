@@ -6,6 +6,8 @@ import SellerHomepage from '@/views/SellerHomepage.vue'
 import SellerOrders from '@/views/SellerOrders.vue'
 import BuyerProfile from '@/views/BuyerProfile.vue'
 import BuyerHomepage from '@/views/BuyerHomepage.vue'
+import SellerPage from '@/views/SellerPage.vue'
+import BuyerOrders from '@/views/BuyerOrders.vue'
 
 function checkType() { 
   let userType = $cookies.get('userType')
@@ -115,6 +117,38 @@ const router = createRouter({
       path: '/BuyerHomepage',
       name: 'BuyerHomepage',
       component: BuyerHomepage,
+      beforeEnter(to,from,next) { 
+        if (checkType()=="Buyer") { 
+            next()
+        }
+        else if (checkType()=="Seller") { 
+          next({name: 'SellerHomepage'})
+        }
+        else { 
+            next({name: 'Homepage'})
+        }
+      }
+    },
+    {
+      path: '/BuyerOrders',
+      name: 'BuyerOrders',
+      component: BuyerOrders,
+      beforeEnter(to,from,next) { 
+        if (checkType()=="Buyer") { 
+            next()
+        }
+        else if (checkType()=="Seller") { 
+          next({name: 'SellerHomepage'})
+        }
+        else { 
+            next({name: 'Homepage'})
+        }
+      }
+    },
+    {
+      path: '/SellerPage/:id',
+      name: 'SellerPage',
+      component: SellerPage,
       beforeEnter(to,from,next) { 
         if (checkType()=="Buyer") { 
             next()

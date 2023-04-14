@@ -21,7 +21,7 @@ router.get('/GetProductById/:id', GetProductById )
 router.put('/RateProduct/:id', RateProduct)
 router.get('/GetAllProducts', GetAllProducts )
 // router.get('/ListAllProductBcRating', ListAllProductsBcRating )
-router.get('/ListAllProductsFromCategory', ListAllProductsFromCategory )
+router.post('/ListAllProductsFromCategory', ListAllProductsFromCategory )
 router.get('/ListAllProductsForSeller/:sellerId', ListAllProductsForSeller )
 
 module.exports = router

@@ -88,6 +88,7 @@ const GetAllProducts = async (req, res)=>{
 
 const ListAllProductsFromCategory = async (req, res)=>{
   try{
+    console.log(req)
     await product.ListAllProductsFromCategory(req.body.category).then(result=>{
       res.status(200).send(result)
     })

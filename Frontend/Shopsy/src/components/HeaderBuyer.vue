@@ -1,9 +1,9 @@
 <template>
     <header class="bg-light mb-2">
       <nav class="container d-flex justify-content-between align-items-center py-3">
-        <router-link :to="{ name: 'BuyerHomepage' }" class="navbar-brand" >Welcome to Shopsy, happy buying!</router-link>
+        <router-link :to="{ name: 'BuyerHomepage' }" class="navbar-brand" ><h3>Welcome to Shopsy, happy buying!</h3></router-link>
         <div>
-          <router-link class="btn btn-primary me-2" to="/BuyerProfile">Profile</router-link>
+          <router-link class="btn btn-primary me-2" to="/BuyerOrders">My orders</router-link>
           <a class="btn btn-secondary" @click="logout">Logout</a>
         </div>
       </nav>

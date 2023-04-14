@@ -77,14 +77,15 @@ class Product{
     }
 
     async GetAllProducts(){
-      const products = await this.db.findBySQL("Product", "SELECT * from c");
+      const products = await this.db.findBySQL("Product", "SELECT * from c WHERE c.quantity >= 1");
       return products
     }
 
     async ListAllProductsFromCategory(c){
       const products = await this.db.find("Product", {
         filter:{
-          category: c
+          category: c,
+          "quantity >=": 1
         }
       })
       return products

@@ -98,10 +98,22 @@ const RateSeller = async (req, res) =>{
   }
 }
 
+const ListAllSellersFromCategory = async (req, res)=>{
+  try{
+    await seller.ListAllSellersFromCategory(req.body.category).then(result=>{
+      res.status(200).send(result)
+    })
+  }
+  catch(err){
+    res.status(500).send(err.message)
+  }
+}
+
 
 module.exports = {  RegisterSeller,
                     LoginSeller, 
                     GetSellerById, 
                     GetAllSellers, 
                     UpdateSeller,
-                    RateSeller }
+                    RateSeller,
+                    ListAllSellersFromCategory }

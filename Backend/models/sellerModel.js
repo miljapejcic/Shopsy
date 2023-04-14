@@ -75,11 +75,18 @@ class Seller{
     }
 
     async GetSellerById(id){
-      const users = await this.db.find("Seller", {
+      let users = await this.db.find("Seller", {
         filter:{
           id: id
         }
       })
+      let products = await this.db.find("Product", {
+        filter:{
+          sellerId: id,
+          "quantity >=": 1
+        }
+      })
+      users[0].products = products
       return users[0]
     }
 
@@ -117,6 +124,19 @@ class Seller{
       await this.db.upsert("Seller", user)
       console.log(user)
       return user
+    }
+
+    async ListAllSellersFromCategory(category){
+      const products = await this.db.find("Product", {
+        filter:{
+          category: category
+        }
+      })
+      let filteredsellerids = [...new Set(products.map(item => item.sellerId))];
+      const quotedids = filteredsellerids.map(str => `'${str}'`);
+      let  query = quotedids.join(",");
+      const sellers = await this.db.findBySQL("Seller",`SELECT * FROM c WHERE c.id IN (${query})`);
+      return sellers
     }
 
 }
