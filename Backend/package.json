@@ -16,6 +16,8 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "gremlin": "^3.6.2",
+    "gremlin-cosmos": "^0.0.14",
     "jsonwebtoken": "^9.0.0",
     "nanoid": "^3.3.4",
     "node-cosmos": "^0.0.21",

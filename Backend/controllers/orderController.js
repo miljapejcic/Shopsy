@@ -10,13 +10,13 @@ const CreateOrder = async (req, res) =>{
             buyerId: req.body.buyerId,
             sellerId: req.body.sellerId,
             productId: req.body.productId,
-            productName:"",
-            productCategory:"",
             quantity: req.body.quantity,
             status: "pending"
           }
 
-          await order.CreateOrder(o).then( result =>{
+          await order.CreateOrder(o).then( (result) =>{
+            console.log("OVO JE RESULT")
+            console.log(this.result)
               res.status(200).send(result)
           }).catch(err => res.status(500).send(err.message))   
     }

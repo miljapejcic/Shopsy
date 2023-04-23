@@ -2,6 +2,7 @@ const {Cosmos} = require('node-cosmos')
 const config = require('../config')
 const bcrypt = require('bcrypt')
 const jwt = require('../token')
+let client = require('../gremlin.js')
 
 class Customer{
     constructor() {
@@ -22,6 +23,10 @@ class Customer{
         console.log(u)
         if(Object.keys(u).length == 0){
           await this.db.upsert("Customer", user)
+          client.submit("g.addV(label).property('id', id).property('userId', id)", {
+            label:"Buyer",
+            id:user.id
+          })
           let token = jwt.createToken(user.id)
           sendInfo = {
             status:200,
