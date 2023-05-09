@@ -26,7 +26,7 @@
                 </div>
                 <div class="form-group stilzaformu">
                     <label for="photo">Photo:</label>
-                    <input style="padding-left:10px" type="file" class="form-control-file" id="photo" @change="handlePhotoUpload">
+                    <input style="padding-left:10px" type="file" class="form-control-file" id="photo" @change="processFile">
                 </div>
                 <button type="submit" class="btn btn-primary" @click="createProduct">Create Product</button>
             </form>
@@ -67,7 +67,8 @@ export default {
                 quantity:0,
                 description:"",
                 photo:null
-            }
+            },
+            photo:null
         }
     },
     computed:{
@@ -79,22 +80,36 @@ export default {
         this.$store.dispatch("GetAllProductsForSeller", this.$cookies.get("id"))
     },
     methods:{
-        handlePhotoUpload(event){
+        processFile(event){
+            this.photo = event.target.files[0];
         },
         createProduct(){
+
             this.product.sellerId = $cookies.get("id")
-            this.$store.dispatch("CreateProduct", this.product).then(()=>{
-                this.$store.dispatch("GetAllProductsForSeller", this.$cookies.get("id"))
-                this.product = {
-                    sellerId:"",
-                    category:"",
-                    name:"",
-                    price:"",
-                    quantity:0,
-                    description:"",
-                    photo:null
-                };
-            })
+            var form = new FormData()
+            form.append('image', this.photo);
+
+
+
+            this.$store.dispatch("CreateProduct", this.product).then((result)=>{
+                this.$store.dispatch("UploadPhoto", {
+                    productId:result.id,
+                    photo:form
+                }).then(()=>{
+                    window.location.reload()
+                    // this.$store.dispatch("GetAllProductsForSeller", this.$cookies.get("id"))
+                    // this.product = {
+                    //     sellerId:"",
+                    //     category:"",
+                    //     name:"",
+                    //     price:"",
+                    //     quantity:0,
+                    //     description:"",
+                    //     photo:null
+                    // };
+                    // this.photo=null
+                })
+                })
         }
     }
 }

@@ -12,9 +12,7 @@ const RegisterSeller = async (req, res) =>{
           username: req.body.username,
           password: hashpass,
           store: req.body.store,
-          owner: req.body.owner,
-          rating:0,
-          NoR:0
+          owner: req.body.owner
         }
   
         await seller.RegisterSeller(user).then( result =>{
@@ -86,17 +84,17 @@ const UpdateSeller = async (req, res) =>{
   }
 }
 
-const RateSeller = async (req, res) =>{
-  try{
-    await seller.RateSeller(req.params.id, req.body).then(result=>{
-      res.status(200).send(result)
-    })
-  }
-  catch(err){
-    console.log(err)
-    res.status(500).send(err.message)
-  }
-}
+// const RateSeller = async (req, res) =>{
+//   try{
+//     await seller.RateSeller(req.params.id, req.body).then(result=>{
+//       res.status(200).send(result)
+//     })
+//   }
+//   catch(err){
+//     console.log(err)
+//     res.status(500).send(err.message)
+//   }
+// }
 
 const ListAllSellersFromCategory = async (req, res)=>{
   try{
@@ -115,5 +113,5 @@ module.exports = {  RegisterSeller,
                     GetSellerById, 
                     GetAllSellers, 
                     UpdateSeller,
-                    RateSeller,
+                    // RateSeller,
                     ListAllSellersFromCategory }

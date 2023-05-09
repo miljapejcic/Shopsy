@@ -20,7 +20,6 @@ class Customer{
           }
         })
         let sendInfo = {}
-        console.log(u)
         if(Object.keys(u).length == 0){
           await this.db.upsert("Customer", user)
           client.submit("g.addV(label).property('id', id).property('userId', id)", {
@@ -56,8 +55,6 @@ class Customer{
       let result = {}
       if(users.length == 1){
         const u = users[0]
-        console.log(password)
-        console.log(u)
         const auth = await bcrypt.compare(password, u.password);
         if (auth){
             let token = jwt.createToken(u.id)
@@ -95,9 +92,7 @@ class Customer{
       })
       let user = users[0]
       user.name = info.name;
-      console.log(user)
       await this.db.upsert("Customer", user)
-      console.log(user)
       return user
     }
 

@@ -1,10 +1,11 @@
 <template>
     <div class="col-xl-3 mb-3">
       <div class="card root">
-        <img src='../../src/assets/slika.jpg' class="card-img-top" alt="Product image">
+        <img :src="product.photo" class="card-img-top" alt="Product image">
         <div class="card-body">
           <h5 class="card-title">{{ product.name }}</h5>
           <p class="card-text">{{ product.category }}</p>
+          <p class="card-text">Rating: {{ product.rating }}</p>
           <button class="btn btn-primary" @click="show">View more</button>
           <teleport to="body">
             <div class="modal" v-if="showModal">
@@ -39,8 +40,6 @@ export default {
     methods:{
         show(){
             this.showModal = true
-            console.log("usla u show")
-            console.log(this.product.id)
         }
     }
 }
@@ -58,7 +57,7 @@ export default {
     position:absolute;
     top:0;
     left:0;
-    background-color: rgba(0,0,0,0.1);
+    /* background-color: rgba(0,0,0,0.1); */
     width:100%;
     height:100%;
     display:flex;
@@ -78,6 +77,7 @@ export default {
   
   .card-img-top {
     height: 200px;
+    width:300px;
     object-fit: cover;
   }
   </style>

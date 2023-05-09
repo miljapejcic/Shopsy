@@ -1,6 +1,7 @@
 const {Cosmos} = require('node-cosmos')
 const config = require('../config')
 let client = require('../gremlin.js')
+const product = require('../models/productModel')
 
 class Order{
     constructor() {
@@ -12,8 +13,6 @@ class Order{
 
     async CreateOrder(order){
       try{
-        console.log("OVO JE ORDER")
-        console.log(order)
         let sendInfo
         let q = 0
         let newDb = this.db
@@ -29,9 +28,7 @@ class Order{
               id:order.id,
               status:"pending",
               buyerId: order.buyerId
-            }).then(function (result) {
-                    console.log("Result: %s\n", JSON.stringify(result));
-            });
+            })
               
             //veza izmedju ordera i buyer
             await client.submit("g.V(source).addE(relationship).to(g.V(target))", {
@@ -54,7 +51,6 @@ class Order{
             await client.submit("g.V().hasLabel('Product').has('id', id).valueMap('price', 'quantity')", {
               id:order.productId 
             }).then(async function (result) {
-              console.log("OVO je cena")
               productPrice = result._items[0].price[0]
               productQuantity = result._items[0].quantity[0]
               await client.submit("g.V().has('id', id).property('price', newValue)", {
@@ -92,8 +88,6 @@ class Order{
               res:null
             }
           }
-          console.log("OVO JE SENDINFO")
-          console.log(sendInfo)
           return sendInfo
         })
       }
@@ -103,31 +97,122 @@ class Order{
     }
 
     async UpdateOrder(orderId){
-      return client.submit("g.V().hasLabel('Order').has('id', id).property('status', newValue)", {
+      let order
+      await client.submit("g.V().hasLabel('Order').has('id', id).property('status', newValue)", {
         id:orderId,
         newValue: "sent"
+      })
+      await client.submit("g.V().hasLabel('Order').has('id', id)", {
+        id:orderId
       }).then(function (result) {
-        console.log("Result: %s\n", JSON.stringify(result));
+        order = {
+          id:result._items[0].id,
+          status: result._items[0].properties.status[0].value,
+          price: result._items[0].properties.price[0].value
+        }
       });
-      // return order
+      await client.submit("g.V().hasLabel('Order').has('id', id).outE('has')", {
+        id:orderId
+      }).then(function (result) {
+        order.quantity = result._items[0].properties.quantity
+      });
+      return order
     }
 
-    async GetAllOrdersForCustomer(customerid){
-      const orders = await this.db.find("Order", {
-        filter:{
-          buyerId: customerid
-        }
+    async FinishOrder(orderId){
+      let order
+      await client.submit("g.V().hasLabel('Order').has('id', id).property('status', newValue)", {
+        id:orderId,
+        newValue: "archived"
       })
-      return orders
+      await client.submit("g.V().hasLabel('Order').has('id', id)", {
+        id:orderId
+      }).then(function (result) {
+        order = {
+          id:result._items[0].id,
+          status: result._items[0].properties.status[0].value,
+          price: result._items[0].properties.price[0].value
+        }
+      });
+      await client.submit("g.V().hasLabel('Order').has('id', id).outE('has')", {
+        id:orderId
+      }).then(function (result) {
+        order.quantity = result._items[0].properties.quantity
+      });
+      return order
     }
+
+
+    async GetAllOrdersForCustomer(customerid) {
+      let orders;
+      await client.submit("g.V().has('Buyer', 'id', customerid).out('bought').has('status', neq('archived')).as('order').project('orderId', 'price', 'status').by(id).by('price').by('status')", {
+        customerid: customerid
+      }).then(async (result) => {
+        orders = result.toArray();
+        const promises = orders.map(async (order) => {
+          const res = await client.submit("g.V().hasLabel('Order').has('id', id).outE('has').valueMap()", {
+            id: order.orderId
+          });
+          order.quantity = res.toArray()[0].quantity;
+          const prod = await client.submit("g.V().hasLabel('Order').has('id',id).outE('has').inV()", {
+            id: order.orderId
+          });
+          let productId= prod.toArray()[0].id;
+          const product = await this.db.find("Product", {
+            filter:{
+              id: productId
+            }
+          })
+          order.product = product[0]
+        });
+        await Promise.all(promises);
+      });
+      return orders;
+    }
+    
 
     async GetAllOrdersForSeller(sellerid){
-      const orders = await this.db.find("Order", {
-        filter:{
-          sellerId: sellerid
-        }
-      })
-      return orders
+      let orders;
+      await client.submit("g.V().has('Seller', 'id', sellerid).out('sells').in('has').has('status', neq('archived')).as('order').project('orderId', 'price', 'status').by(id).by('price').by('status')", {
+        sellerid: sellerid
+      }).then(async (result) => {
+        orders = result.toArray();
+        const promises = orders.map(async (order) => {
+          const res = await client.submit("g.V().hasLabel('Order').has('id', id).outE('has').valueMap()", {
+            id: order.orderId
+          });
+          order.quantity = res.toArray()[0].quantity;
+          const prod = await client.submit("g.V().hasLabel('Order').has('id',id).outE('has').inV()", {
+            id: order.orderId
+          });
+          let productId= prod.toArray()[0].id;
+          const product = await this.db.find("Product", {
+            filter:{
+              id: productId
+            }
+          })
+          order.product = product[0]
+        });
+        await Promise.all(promises);
+      });
+      return orders;
+    }
+
+    async GetRecommendations(buyerId){
+      let sendInfo = {
+        products:[],
+        category:""
+      }
+      await client.submit("g.V().has('Order', 'userId', id).out('has').group().by('category')", {
+        id:buyerId
+      }).then(async function (result) {
+        let categories = result._items[0]
+        sendInfo.category = Object.keys(categories).reduce((a, b) => categories[a] > categories[b] ? a : b);
+        await product.ListAllProductsFromCategory(sendInfo.category).then(result=>{
+          sendInfo.products = result
+        })
+      });
+      return sendInfo
     }
 
 }

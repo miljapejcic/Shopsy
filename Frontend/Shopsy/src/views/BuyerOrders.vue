@@ -1,12 +1,28 @@
 <template>
     <div>
         <HeaderBuyer/>
-        <h1>Pending orders</h1>
-        <OrderCardBuyer v-for="order in pendingOrders" :key="order.id" :order="order"/>
         <h1>Orders that have been sent by seller</h1>
-        <OrderCardBuyer v-for="order in sentOrders" :key="order.id" :order="order"/>
-        <h1>Because you liked:</h1>
-        <p>lista predlozenih proizvoda</p>
+        <div v-if="sentOrders.length >0">
+            <OrderCardBuyer v-for="order in sentOrders" :key="order.orderId" :order="order"/>
+        </div>
+        <div v-else>
+            <h3>You don't have any sent orders.</h3>
+        </div>
+        <h1>Pending orders</h1>
+        <div v-if="pendingOrders.length > 0">
+            <OrderCardBuyer v-for="order in pendingOrders" :key="order.orderId" :order="order"/>
+        </div>
+        <div v-else>
+            <h3>You don't have any pending orders.</h3>
+        </div>
+        <div v-if="recProducts.length > 0">
+            <h1>Because you liked: {{ recCategory }}</h1>
+            <div class="container">
+                    <div class="row d-flex justify-content-center">
+            <ProductCardBuyer v-for="product in recProducts" :key="product.id" :product="product"/>
+                    </div>
+            </div>
+        </div>
         <Footer/>
     </div>
 </template>
@@ -16,6 +32,7 @@
 import HeaderBuyer from '../components/HeaderBuyer.vue'
 import Footer from '../components/Footer.vue'
 import OrderCardBuyer from '../components/OrderCardBuyer.vue';
+import ProductCardBuyer from '../components/ProductCardBuyer.vue';
 
 
 export default {
@@ -23,7 +40,8 @@ export default {
     components:{
         HeaderBuyer,
         Footer,
-        OrderCardBuyer
+        OrderCardBuyer,
+        ProductCardBuyer
     },
     computed:{
         pendingOrders(){
@@ -31,10 +49,17 @@ export default {
         },
         sentOrders(){
             return this.$store.getters.AllSentOrdersForBuyer
+        },
+        recProducts(){
+            return this.$store.getters.RecProducts
+        },
+        recCategory(){
+            return this.$store.getters.RecCategory
         }
     },
     created(){
         this.$store.dispatch("GetOrdersForBuyer", $cookies.get("id"))
+        this.$store.dispatch("GetRecommendations", $cookies.get("id"))
     }
 }
 </script>

@@ -16,7 +16,9 @@ const store = createStore({
       allOrdersForSeller:[],
       productById:null,
       sellerById:null,
-      allOrdersForBuyer:[]
+      allOrdersForBuyer:[],
+      recProducts:[],
+      recCategory:""
 
     },
     actions: {
@@ -167,19 +169,61 @@ const store = createStore({
           if (res.status == 200) { 
             alert("Product created successfully!")
           }
+          return res.data
         }
         catch(err){ 
           console.log(err)
         }
       },
+      async UploadPhoto({commit}, photo){
+        try{
+            let productId = photo.productId
+            let sendPhoto = photo.photo
+            let res = await Api().post(`/api/product/UploadPhoto/${productId}`,sendPhoto, {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+              },
+            })
+            // if (res.status == 200) { 
+                
+            //     window.location.reload()
+
+            // }
+        }
+        catch (err) {
+            console.log(err)
+        }
+    },
       async UpdateProduct({commit},product) { 
         try {
-          console.log(product)
             let res = await Api().put(`api/product/UpdateProduct/${product.productId}`,product)
             if (res.status == 200) { 
                 alert("Update successful!")
             }
-            // commit('setNista')
+        } catch (error) {
+            console.log(error)
+        }
+      },
+      async DeleteProduct({commit},id) { 
+        try {
+          await Api().delete(`api/product/DeleteProduct/${id}`).then((res)=>{
+            if (res.data.status == 200) { 
+                alert(res.data.text)
+            }
+            else if(res.data.status == 409){
+              alert(res.data.text)
+            }
+          })
+        } catch (error) {
+            console.log(error)
+        }
+      },
+      async RateProduct({commit}, sendInfo) { 
+        try {
+            let res = await Api().put(`api/product/RateProduct/${sendInfo.productId}`,sendInfo)
+            if (res.status == 200) { 
+                alert("Rating successful!")
+            }
         } catch (error) {
             console.log(error)
         }
@@ -208,6 +252,14 @@ const store = createStore({
       async UpdateOrder({commit}, orderId){
         try{
           let res = await Api().put(`/api/order/UpdateOrder/${orderId}`)
+        }
+        catch(err){ 
+          console.log(err)
+        }
+      },
+      async FinishOrder({commit}, orderId){
+        try{
+          let res = await Api().put(`/api/order/FinishOrder/${orderId}`)
           if (res.status == 200) { 
             window.location.reload()
           }
@@ -270,6 +322,16 @@ const store = createStore({
           console.log(err)
         }
       },
+      async GetRecommendations({commit}, buyerId){
+        try{
+          let res = await Api().get(`/api/order/GetRecommendations/${buyerId}`)
+          commit('setRecProducts',res.data.products)
+          commit('setRecCategory',res.data.category)
+        }
+        catch(err){ 
+          console.log(err)
+        }
+      },
     },
     mutations: {
       setUserID(state, id){
@@ -301,6 +363,12 @@ const store = createStore({
       },
       setAllOrdersForBuyer(state, orders){
         state.allOrdersForBuyer = orders
+      },
+      setRecProducts(state, products){
+        state.recProducts = products
+      },
+      setRecCategory(state, category){
+        state.recCategory = category
       }
       
     },
@@ -331,6 +399,12 @@ const store = createStore({
       },
       AllSentOrdersForBuyer: state => { 
         return toRaw(state.allOrdersForBuyer.filter(o => o.status == "sent"))
+      },
+      RecProducts: state => { 
+        return toRaw(state.recProducts)
+      },
+      RecCategory: state => { 
+        return toRaw(state.recCategory)
       },
     }
   })

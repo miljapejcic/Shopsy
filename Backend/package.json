@@ -12,6 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "@azure/cosmos": "^3.17.2",
+    "@azure/identity": "^3.1.4",
+    "@azure/storage-blob": "^12.14.0",
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
@@ -19,6 +21,7 @@
     "gremlin": "^3.6.2",
     "gremlin-cosmos": "^0.0.14",
     "jsonwebtoken": "^9.0.0",
+    "multer": "^1.4.5-lts.1",
     "nanoid": "^3.3.4",
     "node-cosmos": "^0.0.21",
     "nodemon": "^2.0.20",

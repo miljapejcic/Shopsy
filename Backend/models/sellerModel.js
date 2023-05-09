@@ -21,14 +21,12 @@ class Seller{
           }
         })
         let sendInfo = {}
-        console.log(u)
         if(Object.keys(u).length == 0){
           await this.db.upsert("Seller", user)
-          client.submit("g.addV(label).property('id', id).property('rating', rating).property('userId', id)", {
+          client.submit("g.addV(label).property('id', id).property('userId', id)", {
             label:"Seller",
-            id:user.id,
-            rating:user.rating
-          })
+            id:user.id
+           })
           let token = jwt.createToken(user.id)
           sendInfo = {
             status:200,
@@ -58,8 +56,6 @@ class Seller{
       let result = {}
       if(users.length == 1){
         const u = users[0]
-        console.log(password)
-        console.log(u)
         const auth = await bcrypt.compare(password, u.password);
         if (auth){
             let token = jwt.createToken(u.id)
@@ -90,7 +86,8 @@ class Seller{
         filter:{
           sellerId: id,
           "quantity >=": 1
-        }
+        },
+        sort: ["rating", "DESC"],
       })
       users[0].products = products
       return users[0]
@@ -110,33 +107,10 @@ class Seller{
       let user = users[0]
       user.owner = info.owner;
       user.store = info.store;
-      console.log(user)
       await this.db.upsert("Seller", user)
-      console.log(user)
       return user
     }
 
-    async RateSeller(id, info){
-      const users = await this.db.find("Seller", {
-        filter:{
-          id: id
-        }
-      })
-      let user = users[0]
-      let noviRating = user.NoR != 0 ? (user.rating*user.NoR)+info.rating : info.rating;
-      user.NoR +=1;
-      user.rating = noviRating / user.NoR;
-      console.log(user)
-      await this.db.upsert("Seller", user)
-
-      client.submit("g.V().has('id', id).property('rating', newValue)", {
-        id:id,
-        newValue: noviRating / user.NoR
-      })
-
-      console.log(user)
-      return user
-    }
 
     async ListAllSellersFromCategory(category){
       const products = await this.db.find("Product", {
@@ -144,6 +118,9 @@ class Seller{
           category: category
         }
       })
+      if(products.length==0){
+        return []
+      }
       let filteredsellerids = [...new Set(products.map(item => item.sellerId))];
       const quotedids = filteredsellerids.map(str => `'${str}'`);
       let  query = quotedids.join(",");

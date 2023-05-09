@@ -1,7 +1,10 @@
 <template>
-    <div v-if="isDataLoaded">
+    <div v-if="isDataLoaded" class="modal-container">
         <h2>Product details</h2>
-        <img src='../../src/assets/slika.jpg' class="" style="width:300px" alt="Product image">
+        <div class="klasa">
+
+            <img :src="product.photo"  class="card-img-top" alt="Product image">
+        </div>
         <p><b>Product name:</b> {{ product.name }}</p>
         <p><b>Product category:</b> {{ product.category }}</p>
         <p><b>Product description:</b> {{ product.description }}</p>
@@ -56,7 +59,6 @@ export default {
         }
     },
     created(){
-        console.log(this.idprod)
         this.$store.dispatch("GetProductById", this.idprod).then(()=>{
             this.isDataLoaded = true
             let tip = $cookies.get("userType")
@@ -87,5 +89,28 @@ export default {
     margin-bottom:10px;
     margin-top:10px;
 }
+
+.modal-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  padding: 20px;
+  max-width: 90%;
+}
+
+.klasa{
+    display: flex;
+    justify-content: center;
+}
+.card-img-top {
+    height: 200px;
+    width:300px;
+    object-fit: cover;
+  }
 
 </style>

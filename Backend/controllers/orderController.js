@@ -15,8 +15,6 @@ const CreateOrder = async (req, res) =>{
           }
 
           await order.CreateOrder(o).then( (result) =>{
-            console.log("OVO JE RESULT")
-            console.log(this.result)
               res.status(200).send(result)
           }).catch(err => res.status(500).send(err.message))   
     }
@@ -35,6 +33,17 @@ const UpdateOrder = async (req, res) =>{
         catch(err){
         res.status(500).send(err.message)
     }
+}
+
+const FinishOrder = async (req, res) =>{
+  try{
+      await order.FinishOrder(req.params.orderId).then(result=>{
+          res.status(200).send(result)
+      })
+      }
+      catch(err){
+      res.status(500).send(err.message)
+  }
 }
 
 const GetAllOrdersForCustomer = async (req, res)=>{
@@ -59,8 +68,21 @@ const GetAllOrdersForSeller = async (req, res)=>{
     }
 }
 
+const GetRecommendations = async (req, res)=>{
+  try{
+    await order.GetRecommendations(req.params.buyerId).then(result=>{
+      res.status(200).send(result)
+    })
+  }
+  catch(err){
+    res.status(500).send(err.message)
+  }
+}
+
 module.exports = {  CreateOrder,
                     UpdateOrder,
+                    FinishOrder,
                     GetAllOrdersForCustomer,
-                    GetAllOrdersForSeller
+                    GetAllOrdersForSeller,
+                    GetRecommendations
 }

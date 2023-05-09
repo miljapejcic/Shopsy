@@ -8,7 +8,6 @@
             <h2> {{ seller.store }}</h2>
             <p> <b>Username: </b> {{ seller.username }}</p>
             <p> <b>Owner: </b> {{ seller.owner }}</p>
-            <p><b>Rating:</b> {{ seller.rating }} ({{ seller.NoR }} total ratings)</p>
             <h3>Their products:</h3>
             <div>
             <div v-if="seller.products.length > 0">

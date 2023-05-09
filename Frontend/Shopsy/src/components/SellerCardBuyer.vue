@@ -1,13 +1,12 @@
 <template>
     <div class="col-xl-3 mb-3">
       <div v-if="signedIn">
-        <router-link class="card root text-decoration-none" :to="{ name: 'SellerPage', params: { id: seller.id } }">
+        <router-link class="card root text-decoration-none text-dark" :to="{ name: 'SellerPage', params: { id: seller.id } }">
           <img src='../../src/assets/store.jpg' class="card-img-top" alt="Product image">
           <div class="card-body">
             <h5 class="card-title">{{ seller.store }}</h5>
             <p class="card-text"><b>Username: </b>{{ seller.username }}</p>
             <p class="card-text"><b>Owner: </b>{{ seller.owner }}</p>
-            <p><b>Rating:</b> {{ seller.rating }} ({{ seller.NoR }} total ratings)</p>
           </div>
         </router-link>
       </div>
@@ -18,7 +17,6 @@
             <h5 class="card-title">{{ seller.store }}</h5>
             <p class="card-text"><b>Username: </b>{{ seller.username }}</p>
             <p class="card-text"><b>Owner: </b>{{ seller.owner }}</p>
-            <p><b>Rating:</b> {{ seller.rating }} ({{ seller.NoR }} total ratings)</p>
           </div>
         </div>
       </div>

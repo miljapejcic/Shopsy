@@ -1,10 +1,11 @@
 <template>
+  <div class="container mb-4 box-shadow card">
     <div class="row">
-        <div class="card mb-4 box-shadow">
-            <div class="card-body">
-                <h5 class="card-title">Order ID number: {{ order.id }}</h5>
-                <p class="card-text">Product name: {{ order.productName }}</p>
-                <p class="card-text">Product category: {{ order.productCategory }}</p>
+      <div class="col">
+        <div class="card-body">
+                <h5 class="card-title">Order ID number: {{ order.orderId }}</h5>
+                <p class="card-text">Product name: {{ order.product.name }}</p>
+                <p class="card-text">Product category: {{ order.product.category }}</p>
                 <p class="card-text">Quantity: {{ order.quantity }}</p>
                 <p class="card-text">Total price: {{ order.price }}</p>
                 <p class="card-text">Status: {{ order.status }}</p>
@@ -12,9 +13,13 @@
                     <button type="submit" class="btn btn-primary" @click="sendOrder">Send Order</button>
                 </div>
             </div>
-        </div>
+      </div>
+      <div class="col d-flex align-items-center justify-content-center">
+        <img :src="order.product.photo" class="card-img-top" alt="">
+      </div>
     </div>
-  </template>
+  </div>
+</template>
   
   <script>
   export default {
@@ -26,8 +31,8 @@
     },
     methods:{
         sendOrder(){
-            this.$store.dispatch("UpdateOrder", this.order.id).then(()=>{
-                this.$store.dispatch("GetAllProductsForSeller", this.$cookies.get("id"))
+            this.$store.dispatch("UpdateOrder", this.order.orderId).then(()=>{
+                this.$store.dispatch("GetAllOrdersForSeller", this.$cookies.get("id"))
             })
         }
     }
@@ -42,6 +47,7 @@
   
   .card-img-top {
     height: 200px;
+    width:300px;
     object-fit: cover;
   }
   

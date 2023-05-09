@@ -41,7 +41,6 @@ export default {
     },
     created(){
         this.$store.dispatch("GetAllOrdersForSeller", this.$cookies.get("id"))
-        console.log(this.pendingOrders)
     },
 }
 </script>

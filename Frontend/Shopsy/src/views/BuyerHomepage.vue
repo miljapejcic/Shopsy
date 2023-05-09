@@ -84,8 +84,9 @@ export default {
                 this.$store.dispatch("GetAllSellers")
             }
             else{
+                let categorySearch = this.searchQuery.charAt(0).toUpperCase() + this.searchQuery.slice(1).toLowerCase()
                 let sendInfo={
-                    category:this.searchQuery
+                    category:categorySearch
                 }
                 this.$store.dispatch("GetAllProductsFromCategory", sendInfo)
                 this.$store.dispatch("GetAllSellersFromCategory", sendInfo)
