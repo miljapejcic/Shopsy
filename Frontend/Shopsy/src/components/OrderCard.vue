@@ -7,6 +7,7 @@
                 <p class="card-text">Product name: {{ order.product.name }}</p>
                 <p class="card-text">Product category: {{ order.product.category }}</p>
                 <p class="card-text">Quantity: {{ order.quantity }}</p>
+                <p class="card-text">Adress: {{ order.address }}</p>
                 <p class="card-text">Total price: {{ order.price }}</p>
                 <p class="card-text">Status: {{ order.status }}</p>
                 <div v-if="order.status =='pending'">

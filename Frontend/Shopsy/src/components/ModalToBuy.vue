@@ -19,6 +19,10 @@
                         <label for="quantity">Quantity:</label>
                         <input type="number" class="form-control" id="quantity" v-model="sendInfo.quantity" min="1" :max="product.quantity" required>
                     </div>
+                    <div class="form-group">
+                        <label for="address">Address:</label>
+                        <input type="text" class="form-control" id="address" v-model="sendInfo.address" required>
+                    </div>
                     <button type="submit" class="dugme btn btn-primary" @click="buyProduct">Buy</button>
             </form>
         </div>
@@ -48,7 +52,8 @@ export default {
                 quantity:1,
                 sellerId:"",
                 buyerId:"",
-                productId:""
+                productId:"",
+                address:""
             },
             signedIn:false
         }
@@ -69,6 +74,7 @@ export default {
     },
     methods:{
         buyProduct(){
+            console.log(this.sendInfo)
             this.sendInfo.buyerId = $cookies.get("id")
             this.sendInfo.productId = this.product.id
             this.sendInfo.sellerId = this.product.sellerId

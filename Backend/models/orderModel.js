@@ -15,7 +15,6 @@ class Order{
       try{
         let sendInfo
         let q = 0
-        let newDb = this.db
         await client.submit("g.V().hasLabel('Product').has('id', id).valueMap('quantity')", {
           id:order.productId 
         }).then(async function (result) {
@@ -23,10 +22,11 @@ class Order{
           if(q >= order.quantity)
           {
             //novi Order cvor
-            await client.submit("g.addV(label).property('id', id).property('status', status).property('userId', buyerId)", {
+            await client.submit("g.addV(label).property('id', id).property('status', status).property('address', address).property('userId', buyerId)", {
               label:"Order",
               id:order.id,
               status:"pending",
+              address:order.address,
               buyerId: order.buyerId
             })
               
@@ -62,7 +62,7 @@ class Order{
                   newQuantity:productQuantity-order.quantity
                 })
   
-                const products = await newDb.find("Product", {
+                const products = await this.db.find("Product", {
                   filter:{
                     id: order.productId
                   }
@@ -70,7 +70,7 @@ class Order{
                 let p = products[0]
                 p.quantity = p.quantity - order.quantity
       
-                await newDb.upsert("Product", p)
+                await this.db.upsert("Product", p)
 
               });
             });
@@ -145,7 +145,7 @@ class Order{
 
     async GetAllOrdersForCustomer(customerid) {
       let orders;
-      await client.submit("g.V().has('Buyer', 'id', customerid).out('bought').has('status', neq('archived')).as('order').project('orderId', 'price', 'status').by(id).by('price').by('status')", {
+      await client.submit("g.V().has('Buyer', 'id', customerid).out('bought').has('status', neq('archived')).as('order').project('orderId', 'price', 'status', 'address').by(id).by('price').by('status').by('address')", {
         customerid: customerid
       }).then(async (result) => {
         orders = result.toArray();
@@ -173,7 +173,7 @@ class Order{
 
     async GetAllOrdersForSeller(sellerid){
       let orders;
-      await client.submit("g.V().has('Seller', 'id', sellerid).out('sells').in('has').has('status', neq('archived')).as('order').project('orderId', 'price', 'status').by(id).by('price').by('status')", {
+      await client.submit("g.V().has('Seller', 'id', sellerid).out('sells').in('has').has('status', neq('archived')).as('order').project('orderId', 'price', 'status', 'address').by(id).by('price').by('status').by('address')", {
         sellerid: sellerid
       }).then(async (result) => {
         orders = result.toArray();
@@ -207,6 +207,7 @@ class Order{
         id:buyerId
       }).then(async function (result) {
         let categories = result._items[0]
+        console.log(result._items[0])
         sendInfo.category = Object.keys(categories).reduce((a, b) => categories[a] > categories[b] ? a : b);
         await product.ListAllProductsFromCategory(sendInfo.category).then(result=>{
           sendInfo.products = result

@@ -15,3 +15,17 @@ const containerName = "productphotos"
 const containerClient = blobServiceClient.getContainerClient(containerName);
 
 module.exports = containerClient
+
+
+
+
+
+
+
+
+
+
+
+
+
+
